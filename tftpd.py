@@ -1,4 +1,21 @@
 #!/usr/bin/python3
+
+# © 2017 Bruno Pitrus <brunopitrus@hotmail.com>
+# https://github.com/brjsp/tftp
+
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import collections,os,socket,struct,sys,threading
 pwd=os.getcwdb()
 def servefile(addr,name,bloks=1):
@@ -49,7 +66,7 @@ def servefile(addr,name,bloks=1):
 						for buf in bufs:
 							#print(' ',hex(struct.unpack('>H',buf[2:4])[0]),end='')
 							sck.sendto(buf,addr)	
-						while True:	#Ignorować nieoczekiwane odpowiedzi, żeby uniknąć https://en.wikipedia.org/wiki/Sorcerer%27s_Apprentice_Syndrome
+						while True:	#Ignere unexpected answers to avoid https://en.wikipedia.org/wiki/Sorcerer%27s_Apprentice_Syndrome
 							reply,addr1=sck.recvfrom(8)
 							if addr==addr1 and len(reply)==4 and reply[:2]==b'\0\4':
 								nextblok=(struct.unpack('>H',reply[2:])[0]+1)%65536
