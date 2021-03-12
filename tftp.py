@@ -1,4 +1,20 @@
 #!/usr/bin/python3
+# © 2017 Bruno Pitrus <brunopitrus@hotmail.com
+# https://github.com/brjsp/tftp
+
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import collections,hashlib,socket,struct,sys
 host = socket.gethostbyname(sys.argv[1]) # 35.156.81.40 149.156.75.213
 try:
@@ -6,10 +22,10 @@ try:
 except:
 	port=69
 filename = sys.argv[2].encode()
-#172.27.255.213 35.156.81.40 149.156.75.213
-#a.txt b.txt a b c d e
 mdsum=hashlib.md5()
-printout=mdsum.update #Zmienić żeby wypisywać na stdout
+# !!!!!!!!!!!!!CHANGE THE BELOW LINE IN ORDER TO ACTUALLY DOWNLOAD THE FILE RATHER THAN CALCULATE ITS HASH!!!!!!!
+printout=mdsum.update 
+# !!!!!!!!!!!!!
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
 	sock.settimeout(.2)
 	last_mess=b'\0\1'+filename+b'\0octet\0windowsize\x0016\0'
@@ -76,8 +92,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
 				#print(hex(blok))
 				try:
 					sock.sendto(b'\0\4'+struct.pack('>H',blok),(host,port))
-					rem2=bloks*2#Gdyby serwer wysyłał pakiety szybciej niż my je przetwarzamy to mogą zalegać, tak chcemy je szybciej pretworzyć
-					rem=bufs.count(None)#Nie zliczamy dubli, zliczamy tylko tyle ile nam brakuje
+					rem2=bloks*2#If the server sends the packets faster than we can process them they might linger, we can process them faster this way
+					rem=bufs.count(None)#We don't count duplicates, we only count how many are missing
 					while rem and rem2:
 						addr=None
 						while not ( addr==(host,port) and reply[:2]==b'\0\3' ):
